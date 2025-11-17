@@ -14,7 +14,7 @@ import time
 logger = logging.getLogger(__name__)
 
 TOOL_NAME = "Dexter"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 DEVELOPER = "Stallion77"
 
 
@@ -251,6 +251,56 @@ modules_to_test = [
         "endpoint": "/",
         "headers": {},
         "behavior": lambda r: any(h in (h.lower() for h in r.headers.keys()) for h in ("x-cache", "x-cache-lookup", "x-cache-status")) or any(kw in (str(v) or "").upper() for kw in ("HIT", "MISS") for v in r.headers.values())
+    }
+    ,
+    {
+        "name": "mod_info",
+        "method": "GET",
+        "endpoint": "/server-info",
+        "headers": {},
+        "behavior": lambda r: ("Apache Server Information" in (r.text or "") or "Server Built" in (r.text or ""))
+    },
+    {
+        "name": "mod_pagespeed",
+        "method": "GET",
+        "endpoint": "/",
+        "headers": {},
+        "behavior": lambda r: bool(r.headers.get("X-Mod-Pagespeed") or r.headers.get("X-Page-Speed") or "pagespeed" in (r.text or "").lower())
+    },
+    {
+        "name": "mod_perl",
+        "method": "GET",
+        "endpoint": "/",
+        "headers": {},
+        "behavior": lambda r: ("mod_perl" in (r.headers.get("Server") or "").lower() or "mod_perl" in (r.text or "").lower() or "perl" in (r.headers.get("Server") or "").lower())
+    },
+    {
+        "name": "mod_proxy_http",
+        "method": "GET",
+        "endpoint": "/",
+        "headers": {},
+        "behavior": lambda r: bool(r.headers.get("Via") or any("x-forwarded-" in k.lower() for k in r.headers.keys()) or "proxy" in (r.headers.get("Server") or "").lower())
+    },
+    {
+        "name": "mod_evasive",
+        "method": "GET",
+        "endpoint": "/",
+        "headers": {},
+        "behavior": lambda r: (r.status_code in (403, 429) and any(m in (r.text or "").lower() for m in ("mod_evasive", "denied", "blacklist", "evasive", "blocked"))) or any("evasive" in h.lower() or "x-evasive" in h.lower() for h in r.headers.keys())
+    },
+    {
+        "name": "mod_http2",
+        "method": "GET",
+        "endpoint": "/",
+        "headers": {},
+        "behavior": lambda r: bool(r.headers.get("Alt-Svc") and ("h2" in (r.headers.get("Alt-Svc") or "").lower() or "http2" in (r.headers.get("Alt-Svc") or "").lower())) or ("http2" in (r.headers.get("Server") or "").lower())
+    },
+    {
+        "name": "mod_expires",
+        "method": "GET",
+        "endpoint": "/",
+        "headers": {},
+        "behavior": lambda r: bool(r.headers.get("Expires") or "max-age" in (r.headers.get("Cache-Control") or "").lower() or "s-maxage" in (r.headers.get("Cache-Control") or "").lower())
     }
 ]
     

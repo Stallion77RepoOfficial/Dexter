@@ -103,12 +103,8 @@ def evaluate_condition(response: requests.Response, condition: Dict) -> bool:
     
     return False
 
-def check_matchers(response: requests.Response, matchers: List[Dict]) -> (bool, List[str]):
-    """
-    Evaluates matchers. 
-    Logic: Matchers are OR'ed. Inside a matcher, conditions are AND'ed.
-    Returns: (Detected_Bool, Evidence_List)
-    """
+def check_matchers(response: requests.Response, matchers: List[Dict]) -> tuple[bool, List[str]]:
+
     evidence = []
     detected = False
 

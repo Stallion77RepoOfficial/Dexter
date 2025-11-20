@@ -1,0 +1,223 @@
+[
+  {
+    "name": "mod_php",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "X-Powered-By", "regex": "(?i)php"},
+          {"type": "cookie", "regex": "(?i)PHPSESSID"}
+        ]
+      },
+      {
+        "conditions": [
+           {"type": "body", "regex": "(?i)(fatal error|warning:)"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_ssl",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+           {"type": "header", "key": "Server", "regex": "(?i)(mod_ssl|openssl)"}
+        ]
+      },
+      {
+        "conditions": [
+           {"type": "header", "key": "Strict-Transport-Security", "regex": "(?i)max-age"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_rewrite",
+    "endpoint": "/this-file-does-not-exist-testing-rewrite",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+           {"type": "status", "value": "404"},
+           {"type": "body", "regex": "(?i)rewrite"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_security",
+    "endpoint": "/",
+    "method": "GET",
+    "headers": {"User-Agent": "ModSecurity-Test-Agent (<script>alert(1)</script>)"},
+    "matchers": [
+      {
+        "conditions": [
+           {"type": "status", "value": "403"},
+           {"type": "body", "regex": "(?i)(mod_security|modsecurity|not acceptable)"}
+        ]
+      },
+      {
+        "conditions": [
+           {"type": "status", "value": "406"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_deflate",
+    "endpoint": "/",
+    "method": "GET",
+    "headers": {"Accept-Encoding": "gzip, deflate"},
+    "matchers": [
+      {
+        "conditions": [
+           {"type": "header", "key": "Content-Encoding", "regex": "(?i)(gzip|deflate)"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_headers",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+           {"type": "header", "key": "X-Frame-Options", "regex": ".*"},
+           {"type": "header", "key": "X-XSS-Protection", "regex": ".*"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_wsgi",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [{"type": "header", "key": "Server", "regex": "(?i)wsgi"}]
+      },
+      {
+        "conditions": [{"type": "header", "key": "X-Powered-By", "regex": "(?i)wsgi"}]
+      }
+    ]
+  },
+  {
+    "name": "mod_proxy",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [{"type": "header", "key": "Via", "regex": ".*"}]
+      },
+      {
+        "conditions": [{"type": "header", "key": "X-Forwarded-For", "regex": ".*"}]
+      }
+    ]
+  },
+  {
+    "name": "mod_evasive",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+            {"type": "status", "value": "403"},
+            {"type": "body", "regex": "(?i)(evasive|denied)"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_jk",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [{"type": "header", "key": "Server", "regex": "(?i)mod_jk"}]
+      }
+    ]
+  },
+  {
+    "name": "mod_passenger",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [{"type": "header", "key": "X-Powered-By", "regex": "(?i)Phusion Passenger"}]
+      },
+      {
+        "conditions": [{"type": "header", "key": "Server", "regex": "(?i)Passenger"}]
+      }
+    ]
+  },
+  {
+    "name": "mod_lua",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+       {
+         "conditions": [{"type": "header", "key": "X-Lua", "regex": ".*"}]
+       }
+    ]
+  },
+  {
+    "name": "mod_qos",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+       {
+         "conditions": [{"type": "header", "key": "X-QoS-Level", "regex": ".*"}]
+       }
+    ]
+  },
+  {
+    "name": "mod_pagespeed",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+       {
+         "conditions": [{"type": "header", "key": "X-Mod-Pagespeed", "regex": ".*"}]
+       }
+    ]
+  },
+  {
+    "name": "mod_perl",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+       {
+         "conditions": [{"type": "header", "key": "Server", "regex": "(?i)mod_perl"}]
+       }
+    ]
+  },
+  {
+    "name": "mod_http2",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+       {
+         "conditions": [{"type": "header", "key": "Upgrade", "regex": "(?i)h2c?"}]
+       },
+       {
+         "conditions": [{"type": "header", "key": "X-Http2", "regex": ".*"}]
+       }
+    ]
+  },
+  {
+    "name": "mod_auth_openidc",
+    "endpoint": "/redirect_uri",
+    "method": "GET",
+    "matchers": [
+        {
+            "conditions": [{"type": "body", "regex": "(?i)OpenID Connect"}]
+        },
+        {
+            "conditions": [{"type": "cookie", "regex": "(?i)mod_auth_openidc"}]
+        }
+    ]
+  }
+]

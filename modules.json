@@ -12,7 +12,7 @@
       },
       {
         "conditions": [
-           {"type": "body", "regex": "(?i)(fatal error|warning:)"}
+          {"type": "body", "regex": "(?i)(fatal error|warning:).*on line"}
         ]
       }
     ]
@@ -24,44 +24,12 @@
     "matchers": [
       {
         "conditions": [
-           {"type": "header", "key": "Server", "regex": "(?i)(mod_ssl|openssl)"}
+          {"type": "header", "key": "Server", "regex": "(?i)(mod_ssl|openssl)"}
         ]
       },
       {
         "conditions": [
-           {"type": "header", "key": "Strict-Transport-Security", "regex": "(?i)max-age"}
-        ]
-      }
-    ]
-  },
-  {
-    "name": "mod_rewrite",
-    "endpoint": "/this-file-does-not-exist-testing-rewrite",
-    "method": "GET",
-    "matchers": [
-      {
-        "conditions": [
-           {"type": "status", "value": "404"},
-           {"type": "body", "regex": "(?i)rewrite"}
-        ]
-      }
-    ]
-  },
-  {
-    "name": "mod_security",
-    "endpoint": "/",
-    "method": "GET",
-    "headers": {"User-Agent": "ModSecurity-Test-Agent (<script>alert(1)</script>)"},
-    "matchers": [
-      {
-        "conditions": [
-           {"type": "status", "value": "403"},
-           {"type": "body", "regex": "(?i)(mod_security|modsecurity|not acceptable)"}
-        ]
-      },
-      {
-        "conditions": [
-           {"type": "status", "value": "406"}
+          {"type": "header", "key": "Strict-Transport-Security", "regex": ".*"}
         ]
       }
     ]
@@ -74,7 +42,12 @@
     "matchers": [
       {
         "conditions": [
-           {"type": "header", "key": "Content-Encoding", "regex": "(?i)(gzip|deflate)"}
+          {"type": "header", "key": "Content-Encoding", "regex": "(?i)(gzip|deflate)"}
+        ]
+      },
+      {
+        "conditions": [
+          {"type": "header", "key": "Vary", "regex": "(?i)Accept-Encoding"}
         ]
       }
     ]
@@ -86,47 +59,17 @@
     "matchers": [
       {
         "conditions": [
-           {"type": "header", "key": "X-Frame-Options", "regex": ".*"},
-           {"type": "header", "key": "X-XSS-Protection", "regex": ".*"}
+          {"type": "header", "key": "X-Frame-Options", "regex": ".*"}
         ]
-      }
-    ]
-  },
-  {
-    "name": "mod_wsgi",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
-      {
-        "conditions": [{"type": "header", "key": "Server", "regex": "(?i)wsgi"}]
       },
-      {
-        "conditions": [{"type": "header", "key": "X-Powered-By", "regex": "(?i)wsgi"}]
-      }
-    ]
-  },
-  {
-    "name": "mod_proxy",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
-      {
-        "conditions": [{"type": "header", "key": "Via", "regex": ".*"}]
-      },
-      {
-        "conditions": [{"type": "header", "key": "X-Forwarded-For", "regex": ".*"}]
-      }
-    ]
-  },
-  {
-    "name": "mod_evasive",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
       {
         "conditions": [
-            {"type": "status", "value": "403"},
-            {"type": "body", "regex": "(?i)(evasive|denied)"}
+          {"type": "header", "key": "Content-Security-Policy", "regex": ".*"}
+        ]
+      },
+      {
+        "conditions": [
+          {"type": "header", "key": "X-Content-Type-Options", "regex": "(?i)nosniff"}
         ]
       }
     ]
@@ -137,7 +80,101 @@
     "method": "GET",
     "matchers": [
       {
-        "conditions": [{"type": "header", "key": "Server", "regex": "(?i)mod_jk"}]
+        "conditions": [
+          {"type": "header", "key": "Server", "regex": "(?i)mod_jk"}
+        ]
+      },
+      {
+        "conditions": [
+          {"type": "cookie", "regex": "(?i)JSESSIONID"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_proxy",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "Via", "regex": "(?i)Apache"}
+        ]
+      },
+      {
+        "conditions": [
+          {"type": "header", "key": "X-Forwarded-For", "regex": ".*"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_pagespeed",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "X-Mod-Pagespeed", "regex": ".*"}
+        ]
+      },
+      {
+        "conditions": [
+          {"type": "header", "key": "X-Page-Speed", "regex": ".*"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_perl",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "Server", "regex": "(?i)mod_perl"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_wsgi",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "Server", "regex": "(?i)mod_wsgi"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_http2",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "Upgrade", "regex": "(?i)h2c"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_dav",
+    "endpoint": "/",
+    "method": "OPTIONS",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "DAV", "regex": ".*"}
+        ]
+      },
+      {
+        "conditions": [
+          {"type": "header", "key": "MS-Author-Via", "regex": "(?i)DAV"}
+        ]
       }
     ]
   },
@@ -147,10 +184,50 @@
     "method": "GET",
     "matchers": [
       {
-        "conditions": [{"type": "header", "key": "X-Powered-By", "regex": "(?i)Phusion Passenger"}]
+        "conditions": [
+          {"type": "header", "key": "X-Powered-By", "regex": "(?i)Passenger"}
+        ]
       },
       {
-        "conditions": [{"type": "header", "key": "Server", "regex": "(?i)Passenger"}]
+        "conditions": [
+          {"type": "header", "key": "Server", "regex": "(?i)Passenger"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_ratelimit",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "X-RateLimit-Limit", "regex": ".*"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_security (Passive Detection)",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "Server", "regex": "(?i)mod_security"}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mod_qos",
+    "endpoint": "/",
+    "method": "GET",
+    "matchers": [
+      {
+        "conditions": [
+          {"type": "header", "key": "X-QoS-Level", "regex": ".*"}
+        ]
       }
     ]
   },
@@ -159,65 +236,11 @@
     "endpoint": "/",
     "method": "GET",
     "matchers": [
-       {
-         "conditions": [{"type": "header", "key": "X-Lua", "regex": ".*"}]
-       }
-    ]
-  },
-  {
-    "name": "mod_qos",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
-       {
-         "conditions": [{"type": "header", "key": "X-QoS-Level", "regex": ".*"}]
-       }
-    ]
-  },
-  {
-    "name": "mod_pagespeed",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
-       {
-         "conditions": [{"type": "header", "key": "X-Mod-Pagespeed", "regex": ".*"}]
-       }
-    ]
-  },
-  {
-    "name": "mod_perl",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
-       {
-         "conditions": [{"type": "header", "key": "Server", "regex": "(?i)mod_perl"}]
-       }
-    ]
-  },
-  {
-    "name": "mod_http2",
-    "endpoint": "/",
-    "method": "GET",
-    "matchers": [
-       {
-         "conditions": [{"type": "header", "key": "Upgrade", "regex": "(?i)h2c?"}]
-       },
-       {
-         "conditions": [{"type": "header", "key": "X-Http2", "regex": ".*"}]
-       }
-    ]
-  },
-  {
-    "name": "mod_auth_openidc",
-    "endpoint": "/redirect_uri",
-    "method": "GET",
-    "matchers": [
-        {
-            "conditions": [{"type": "body", "regex": "(?i)OpenID Connect"}]
-        },
-        {
-            "conditions": [{"type": "cookie", "regex": "(?i)mod_auth_openidc"}]
-        }
+      {
+        "conditions": [
+          {"type": "header", "key": "X-Lua", "regex": ".*"}
+        ]
+      }
     ]
   }
 ]
